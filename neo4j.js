@@ -1,9 +1,8 @@
-const neo4j = require('neo4j-driver').v1;
+const neo4j = require('neo4j-driver');
 module.exports = function (RED) {
     function NulliNeo4j(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-        //console.log(`url = ${config.url}`);
         const driver = neo4j.driver(config.url, neo4j.auth.basic(config.username, config.password));
         const session = driver.session();
         if (session) {
@@ -13,7 +12,6 @@ module.exports = function (RED) {
                 text: "node-red:common.status.connected"
             });
             node.on('input', function (msg) {
-                //console.log(`decoding QR data from ${msg.payload}`);
                 var query = config.query || msg.query;
                 let params = null;
                 if (typeof (msg.params) === 'string') {
@@ -21,7 +19,6 @@ module.exports = function (RED) {
                 } else {
                     params = msg.params;
                 }
-                //console.log(`params: ${params}`);
                 const resultPromise = session.run(query, params);
 
                 var array_result = {
